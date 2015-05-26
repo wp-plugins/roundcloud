@@ -1,7 +1,7 @@
 ﻿=== RoundCloud Advertising ===
 Contributors: RoundCloud
 Donate link: 
-Tags: affiliate, affiliates manager, affiliate marketing, affiliate plugin, affiliates, referral, affiliate program, ads, advertising, affiliate tool, e-commerce, tracking, track affiliates, leads, affiliate software, woocommerce, affiliate campaign, contact form 7, affiliate network, cpa marketing, cpc, cps, cpm, offers
+Tags: affiliate, affiliates manager, affiliate marketing, affiliate plugin, affiliates, referral, affiliate program, ads, advertising, affiliate tool, affiliate tools, e-commerce, tracking, track affiliates, leads, affiliate software, woocommerce, affiliate campaign, contact form 7,woocommerce tools, woocommerce tool, affiliate network, cpa marketing, cpc, cps, cpm, offers
 Requires at least: 3.5
 Tested up to: 4.2.2
 Stable tag: 1.0.0
