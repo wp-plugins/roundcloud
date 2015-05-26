@@ -21,7 +21,7 @@ echo "<p>The advertiser's online registration takes only 1 minute. Immediately a
 if(get_option('rc_PanAccountId')!==false){
 	include('admin_registered_values.php');
 }else{
-	include('admin_login.php');
+	include('admin_unregistered_values.php');
 	
 }
 echo "</div>";

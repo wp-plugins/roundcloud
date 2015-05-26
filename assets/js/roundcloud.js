@@ -4,7 +4,7 @@ jQuery(document).ready(function(){
 	get_option('rc_PanAccountId',function(output){
 	rc_PanAccountId =output;
 	});
-	jQuery('#rc_register_container').hide();
+	jQuery('#rc_login_container').hide();
 	getCountryList();
 	
 });

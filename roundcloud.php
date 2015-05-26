@@ -3,8 +3,8 @@
 Plugin Name: RoundCloud
 Plugin URI: http://yourcloudaround.com/en/
 Description:  RoundCloud plugin
-Version: 1.0
-Author:Starshinin Vitaly
+Version: 1.0.1
+Author:RoundCloud
 Author URI: http://yourcloudaround.com/en/
 License: GPL2
 */
@@ -57,7 +57,7 @@ function rc_full_logout(){
 function rc_userlist_init(){
 	$icon =plugins_url('RoundCloud/assets/img/icon.png');
 	
-	add_object_page('RoundCloud', 'RoundCloud', -1, basename(__FILE__), '', $icon);
+	add_object_page('ROUNDCLOUD ADVERTISING', 'ROUNDCLOUD ADVERTISING', -1, basename(__FILE__), '', $icon);
 	
 	add_submenu_page(basename(__FILE__), 'General settings', 'General settings', 10, 'rc_settings', 'rc_load_settings');
 	

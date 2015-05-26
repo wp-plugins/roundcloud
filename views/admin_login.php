@@ -11,7 +11,5 @@
 	<a href="javascript:rc_register_new_user()"  class="ecwid_admin_btn">Register</a>
 </div>
 </div>
-<?php
-	include('admin_unregistered_values.php');
-?>
+
 
