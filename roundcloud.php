@@ -55,7 +55,7 @@ function rc_full_logout(){
 
 
 function rc_userlist_init(){
-	$icon =plugins_url('RoundCloud/assets/img/icon.png');
+	$icon =plugins_url('roundcloud/assets/img/icon.png');
 	
 	add_object_page('ROUNDCLOUD ADVERTISING', 'ROUNDCLOUD ADVERTISING', -1, basename(__FILE__), '', $icon);
 	
