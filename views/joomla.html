@@ -1,0 +1,452 @@
+{source}
+<!-- You can place html anywhere within the source tags -->
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script language="javascript" type="text/javascript">
+    // You can place JavaScript like this
+var pan_pages = JSON.parse('{"Campaigns":0,"Banners":1,"Affiliates":2,"Transactions":3,"Reports":4,"Emails":5,"Configuration":6,"Tools":7,"My network accaount":8}');
+
+jQuery(document).ready(function(){
+    jQuery('#rc_register_container').hide();
+    jQuery('#rc_iframe_container').hide();
+    getCountryList();
+});
+window.addEventListener('message', receiveMessage, false);
+
+function receiveMessage(evt)
+{
+
+	var _func = evt.data.split('.')[0];
+	if(_func == 'height'){
+		jQuery('#rc_manage_adv_iframe').css('height',evt.data.split('.')[1]);
+	}
+	if(_func == 'page'){
+		console.log(evt.data.split('.')[1]);
+		sliderJS (rc_search(pan_pages,evt.data.split('.')[1]),true);
+	}
+}
+
+function rc_register_new_user(){
+    jQuery('#rc_login_container').hide();
+    jQuery('#rc_register_container').show();
+}
+function rc_login_user(){
+    jQuery('#rc_login_container').show();
+    jQuery('#rc_register_container').hide();
+}
+
+//validate registration data
+function validate() {
+    var data = Object();
+    var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})jQuery/;
+  
+    if(reg.test(jQuery('#Savereg_email').val()) == true) {
+        data['email']=true;
+    }else{
+        data['email']=false;
+    }
+    if(jQuery('#Savereg_login').val() !== '') {
+        data['login']=true;
+    }else{
+        data['login']=false;
+    }
+    
+    if(jQuery('#Savereg_country').val() !== '') {
+        data['country']=true;
+    }else{
+        data['coutry']=false;
+    }
+    
+    if(jQuery('#Savereg_password').val() !== '') {
+        data['password']=true;
+    }else{
+        data['password']=false;
+    }
+    if(jQuery('#Repeat_Savereg_password').val() !== '') {
+        data['repeat_password']=true;
+    }else{
+        data['repeat_password']=false;
+    }
+    
+    var result=jQuery('#Savereg_chbox').prop('checked');
+        data['checkbox']=result;
+    if(!data['password'] || !data['repeat_password'] || !data['email'] || !data['login'] || !data['country']){
+        return "Fill all fields";
+    }
+    if(jQuery('#Repeat_Savereg_password').val() !== jQuery('#Savereg_password').val()){
+        
+        return "Wrong password";
+    }
+    if(!data['checkbox']){
+        return "You need to confirm agreement.";
+    }else{
+        return "ok";
+    }
+}
+
+
+function showProgressBar(){
+    jQuery('.admin_progressbar').show();
+}
+function hideProgressBar(){
+    jQuery('.admin_progressbar').hide();
+}
+
+//function show message alert
+function showToast(message,reload){
+
+        jQuery('.Toast').text(message).fadeIn(400).delay(3000).fadeOut(400);
+
+
+}
+
+//login
+function PaNLogin(){ 
+    var data = Object();
+    data['QueryType']='PaNlogin';
+    data['email'] = jQuery('#rc_login_username').val();
+    data['pass'] = jQuery('#rc_login_password').val();
+	data['userRole']=jQuery('#rc_login_merch_aff').val();
+    showProgressBar();
+    jQuery.ajax({
+    
+          url: 'http://affiliate.yourcloudaround.com/scripts/savereg.php',
+            data: data,
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                hideProgressBar();
+                if(response.status=="success"){
+                    console.log(response);
+                    showToast("Logined");
+                    jQuery('#rc_login_container').hide();
+                    jQuery('#rc_register_container').hide();
+                    jQuery('#rc_iframe_container').show();
+                    jQuery('#rc_manage_adv_iframe').attr('src',response.iframe_url);
+                }else{
+                    showToast(response.text);
+                }    
+            },
+                
+            error: function (response) {
+                console.log(response);
+                showToast(response.text);
+            }
+
+        });
+}
+
+//get list of countries for registration
+function getCountryList(){ 
+    var data = Object();
+    data['QueryType']='GetCountries';
+    showProgressBar();
+    jQuery.ajax({
+    
+          url: 'http://affiliate.yourcloudaround.com/scripts/savereg.php',
+            data: data,
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                hideProgressBar();
+                if(response.status=="success"){
+                    jQuery(response.data).each(function(){
+                        jQuery('#Savereg_country').append('<option value="'+this.code+'">'+this.desc+'</option>');
+                    });
+                    
+                
+                }else{
+                    showToast(response.text);
+                }    
+            },
+                
+            error: function (response) {
+                console.log(response);
+                showToast(response.text);
+            }
+
+        });
+}
+
+//registration new merchant
+function sendRegistrationRequest(){
+    var data = Object();
+	if(jQuery('#rc_reg_merch_aff').val() == 'merchant'){
+		data['QueryType']='Registration';
+	}else{
+		data['QueryType']='addAffiliateForJoomla';
+	}
+    
+    data['Email'] = jQuery('#Savereg_email').val();
+    data['AppName'] = 'RC_ECWID_ADV_V1.0';
+    data['AccountName'] = jQuery('#Savereg_login').val();
+    data['roleType'] =jQuery('#rc_reg_merch_aff').val();
+    data['password'] = jQuery('#Savereg_password').val();
+    data['lang']='en-US';
+    data['country'] = jQuery('#Savereg_country').val();
+    console.log(data);
+    if(validate() =="ok"){
+    showProgressBar();
+    jQuery.ajax({
+          url: 'http://affiliate.yourcloudaround.com/scripts/savereg.php',
+            data: data,
+            dataType: 'json',
+            type: 'POST',
+            success: function (response) {
+                hideProgressBar();
+                if(response.status=="success"){
+                    console.log(response);
+                    showToast("The user was created");
+                    jQuery('#rc_login_container').hide();
+                    jQuery('#rc_register_container').hide();
+                    jQuery('#rc_iframe_container').show();
+                    jQuery('#rc_manage_adv_iframe').attr('src',response.iframe_url);
+                }else{
+                    showToast(response.text);
+                    console.log(response);
+                }    
+            },
+                
+            error: function (response) {
+            console.log(response);
+                hideProgressBar();
+                showToast(response);
+            }
+
+        });
+    }else{
+        showToast(validate());
+    }
+
+}
+
+function rc_search(obj, key) {
+    var objects = [];
+    for (var i in obj) {
+        if (!obj.hasOwnProperty(i)) continue;
+        if (typeof obj[i] == 'object') {
+            objects = objects.concat(getValues(obj[i], key));
+        } else if (i == key) {
+            return obj[i];
+        }
+    }
+
+}
+
+function sliderJS (obj,fromiframe) { 
+ var ul = jQuery('.slider').find("ul"); 
+ var bl = jQuery('.slider').find("li.slider"+obj);
+ var step = jQuery(bl).width();
+ 
+ if(step == null){
+	jQuery('.super_slider').find(".rc_left").attr('rel',0);
+	jQuery('.super_slider').find(".rc_right").attr('rel',0);
+ }
+ if(fromiframe){
+	 jQuery('.super_slider').find(".rc_left").attr('rel',obj);
+	jQuery('.super_slider').find(".rc_right").attr('rel',obj-1);
+	 
+ }
+
+ jQuery(ul).animate({marginLeft: "-"+step*obj}, 500); 
+}
+
+jQuery(document).on("click", ".super_slider .nav span", function() { 
+
+ if(jQuery(this).hasClass('rc_left')){
+	if(parseInt(jQuery('.super_slider').find(".rc_left").attr('rel')) >=1){
+		jQuery('.super_slider').find(".rc_right").attr('rel', parseInt(jQuery('.super_slider').find(".rc_right").attr('rel'))-1);
+		jQuery('.super_slider').find(".rc_left").attr('rel', parseInt(jQuery('.super_slider').find(".rc_left").attr('rel'))-1);
+		obj = 	 parseInt(jQuery('.super_slider').find(".rc_left").attr('rel'))
+	}
+
+ }else{
+		jQuery('.super_slider').find(".rc_right").attr('rel', parseInt(jQuery('.super_slider').find(".rc_right").attr('rel'))+1);
+		jQuery('.super_slider').find(".rc_left").attr('rel', parseInt(jQuery('.super_slider').find(".rc_left").attr('rel'))+1);
+obj = 	 parseInt(jQuery('.super_slider').find(".rc_left").attr('rel'))
+ }
+ 
+
+ sliderJS(obj,false); 
+
+ return false;
+});    
+</script>
+<style>
+
+ .slider {
+ z-index: 9;
+ width: calc(100% - 7em);
+ height: 150px;
+ overflow: hidden;
+ margin: 0 0 7px;
+ position: relative;
+ 
+ }
+ .slider ul,
+ .slider li {
+ padding: 0;
+ margin: 0;
+ list-style-type: none;
+ }
+ .slider ul {
+ width: 9999px; 
+ }
+ .slider ul li {
+ list-style-type: none;
+ float: left;
+width:300px;
+ height: 150px;
+   text-align: center;
+ }
+  .slider ul li h{
+font-weight:bold;
+font-size:14px;
+ }
+  .slider ul li div{
+   height: calc(100% - 2em);
+  border: 1px solid grey;
+    text-align: left;
+	 margin: 5px;
+
+ }
+ 
+
+ .super_slider .nav {
+
+ left: 15px;
+ bottom: 12px; 
+ }
+ .super_slider .nav span {
+
+ height: 150px;
+ 
+ cursor: pointer;
+ overflow: hidden;
+ display: block;
+ float: left;
+width:30px;	
+}
+ .super_slider .nav span.rc_left {
+background-image: url(../img/left.png);
+}
+ .super_slider .nav span.rc_right {
+background-image: url(../img/right.png);
+}
+ .slider .nav span.on {
+ background: #2e9419;
+ }
+ 
+ .super_slider{
+   padding-top: 10px;
+ }
+
+
+</style>
+<div id="rc_login_container">
+<select id="rc_login_merch_aff">
+<option value="merchant">Merchant</option>
+<option value="affiliate">Affiliate</option>
+</select>
+<div style="padding-top: 10px;"><h style="font-weight:bold;">Advertiser email (username):</h></div>
+<input type="text" style="width: 300px;" value="" id="rc_login_username" ></input>
+<div style="padding-top: 10px;"><h style="font-weight:bold;">Password:</h></div>
+<input type="text" style="width: 300px;" value="" id="rc_login_password" ></input><label for="rc_login_password"> or<a href="http://affiliate.yourcloudaround.com/merchants/login.php#reqpasswd" target="_blank">  change password</a></label>
+<div style="  padding-top: 20px;">
+    <a href="javascript:PaNLogin()"  class="btn btn-warning">Login   </a>
+    <a href="javascript:rc_register_new_user()"  class="btn btn-success">Register</a>
+</div>
+</div>
+<div id="rc_register_container">
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <h style="font-weight:bold;">Advertiser email (username):</h>
+            </td>
+            <td>
+                <input type="text" style="width: 300px;" value="" id="Savereg_email"></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h style="font-weight:bold;">Advertiser name:</h>
+            </td>
+            <td>
+                <input type="text" style="width: 300px;" value="" id="Savereg_login"></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                    <h style="font-weight:bold;">Select your country:</h>
+            </td>
+            <td>
+                <select style="width: 300px;" value="" id="Savereg_country"></select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                    <h style="font-weight:bold;">Set password:</h>
+            </td>
+            <td>
+                <input type="text" style="width: 300px;" value="" id="Savereg_password"></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h style="font-weight:bold;">Repeat password:</h>
+            </td>
+            <td>
+                <input type="text" style="width: 300px;" value="" id="Repeat_Savereg_password"></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <h>I agree with RoundCloud</br><a href="#">Terms&Conditions:</a></h>
+            </td>
+            <td>
+                <input type="checkbox" id="Savereg_chbox"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div style="  padding-top: 10px;">
+                    <a href="javascript:rc_login_user()"  class="ecwid_admin_btn">Login</a>
+                </div>
+            </td>
+            <td>
+                <div style="  padding-top: 10px;">
+                    <a href="javascript:sendRegistrationRequest()"  class="ecwid_admin_btn">Save&SingUp</a>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
+<div id="rc_iframe_container">
+<div class="super_slider">
+<div class="nav" style="float:left"><span class="rc_left" rel="1"></span></div>
+<div class="slider" style="float:left">
+	
+	<ul>
+		<li class="slider0"><h>Create campaign</h><div>some text1 some text some text some text some textsome text1 some text some text some text some textsome text1 some text some text some text some text </div></li>
+		<li class="slider1"><h>Banners</h><div>some text 2some text some text some text some textsome text1 some text some text some text some textsome text1 some text some text some text some text </div></li>
+		<li class="slider2"><h>Affiliates</h><div>some text3 some text some text some text some text some text1 some text some text some text some textsome text1 some text some text some text some text</div></li>
+		<li class="slider3"><h>Transactions</h><div>some text4 some text some text some text some textsome text1 some text some text some text some textsome text1 some text some text some text some text </div></li>
+		<li class="slider4"><h>Reports</h><div>some text5 some text some text some text some text some text1 some text some text some text some textsome text1 some text some text some text some text</div></li>
+		<li class="slider5"><h>Email</h><div>some text1 some text some text some text some text some text1 some text some text some text some textsome text1 some text some text some text some text</div></li>
+		<li class="slider6"><h>Configuration</h><div>some text 2some text some text some text some text some text1 some text some text some text some textvsome text1 some text some text some text some text</div></li>
+		<li class="slider7"><h>Tools</h><div>some text3 some text some text some text some text some text1 some text some text some text some textsome text1 some text some text some text some text</div></li>
+		<li class="slider8"><h>My network account</h><div>some text4 some text some text some text some text some text1 some text some text some text some textsome text1 some text some text some text some text</div></li>
+	
+	</ul>
+	
+	
+</div>
+<div class="nav" ><span class="rc_right" rel="0" style=""></span></div>
+</div>
+<iframe style="width:100%;" scrolling="no" id="rc_manage_adv_iframe" src=""/>
+</div>
+
+{/source}
