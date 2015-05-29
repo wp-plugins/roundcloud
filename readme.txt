@@ -4,7 +4,7 @@ Donate link:
 Tags: affiliate, affiliates manager, affiliate marketing, affiliate plugin, affiliates, referral, affiliate program, ads, advertising, affiliate tool, e-commerce, tracking, track affiliates, leads, affiliate software, woocommerce, affiliate campaign, contact form 7, affiliate network, cpa marketing, cpc, cps, cpm, offers
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,7 +95,7 @@ None
 * added market icon 
 * changed name in menu
 
-= 1.0.2 =
+= 1.0.3 =
 * Fixed a bug where the registration was not possible because of the included browser protection against banners.
 
 == Upgrade Notice ==
