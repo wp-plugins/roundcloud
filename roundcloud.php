@@ -3,7 +3,7 @@
 Plugin Name: RoundCloud
 Plugin URI: http://yourcloudaround.com/en/
 Description:  RoundCloud plugin
-Version: 1.0.1
+Version: 1.0.2
 Author:RoundCloud
 Author URI: http://yourcloudaround.com/en/
 License: GPL2
